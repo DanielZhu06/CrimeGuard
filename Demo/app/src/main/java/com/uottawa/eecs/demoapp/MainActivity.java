@@ -30,11 +30,37 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initUI();
-        new Thread(this::fetchAllCsv).start();
+        if (useTestData()) {
+            new Thread(this::loadTestData).start();
+        } else {
+            new Thread(this::fetchAllCsv).start();
+        }
     }
 
     private void initUI() {
-        // ListView is populated in loadLocations
+    }
+
+    private boolean useTestData() {
+        return true; // Set to true to use test data
+    }
+
+    private void loadTestData() {
+        try (java.io.InputStream is = getAssets().open("test_data.csv");
+                java.io.FileOutputStream fos = openFileOutput("combined.csv", MODE_PRIVATE)) {
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                fos.write(buffer, 0, length);
+            }
+            Log.i(TAG, "Test data loaded to combined.csv");
+
+            // Load locations for ListView
+            runOnUiThread(this::loadLocations);
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error loading test data", e);
+        }
     }
 
     private void fetchAllCsv() {
@@ -113,19 +139,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (!locations.isEmpty()) {
             android.widget.ListView listView = findViewById(R.id.neighbourhoodListView);
-            android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<String>(
+            android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(
                     this,
-                    android.R.layout.simple_list_item_1,
-                    locations) {
-                @Override
-                public android.view.View getView(int position, android.view.View convertView,
-                        android.view.ViewGroup parent) {
-                    android.view.View view = super.getView(position, convertView, parent);
-                    android.widget.TextView textView = (android.widget.TextView) view.findViewById(android.R.id.text1);
-                    textView.setTextColor(getResources().getColor(R.color.white)); // Ensure text is visible on dark bg
-                    return view;
-                }
-            };
+                    R.layout.item_neighbourhood,
+                    locations);
             listView.setAdapter(adapter);
 
             listView.setOnItemClickListener((parent, view, position, id) -> {

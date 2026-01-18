@@ -27,11 +27,10 @@ public class CsvCombiner {
 
                     while ((line = reader.readLine()) != null) {
                         if (firstLine) {
-                            firstLine = false; // skip header of individual CSV
+                            firstLine = false;
                             continue;
                         }
 
-                        // Add filename as first column
                         String combinedLine = fileName + "," + line + "\n";
                         fos.write(combinedLine.getBytes());
                     }

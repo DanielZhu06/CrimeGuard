@@ -6,4 +6,9 @@
     <color name="security_accent">#FF4C4C</color>
     <color name="shield_grey">#B0C4DE</color>
     <color name="background_dark">#121212</color>
+    
+    <color name="safety_very_safe">#4CAF50</color>
+    <color name="safety_safe">#2196F3</color>
+    <color name="safety_moderate">#FF9800</color>
+    <color name="safety_dangerous">#FF4C4C</color>
 </resources>
